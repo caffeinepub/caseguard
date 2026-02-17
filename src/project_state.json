@@ -1,0 +1,40 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 3,
+  "summary": "New project",
+  "architectural_notes": [],
+  "known_issues": [
+    "App shows 'Something went wrong' with Minified React error #301, likely due to an infinite loop in the login flow/rendering."
+  ],
+  "isFixRequest": true,
+  "existing_features": [
+    {
+      "id": "feature-scan-the-entire-frontend-src-folder-for-login-authentication-related-code-paths-internet-identity-provider-auth-ui-hook-auth-guard-login-button-router-usage-and-identify-the-exact-cause-of-the-infinite-render-loop-leading-to-minified-react-error-301-implement-a-targeted-patch-that-eliminates-the-loop-without-breaking-the-intended-post-login-redirect-behavior",
+      "title": "Scan the entire `frontend/src` folder for login/authentication-related code paths (Internet Identity provider, auth UI hook, auth guard, login button, router usage) and identify the exact cause of the infinite render loop leading to “Minified React error #301”. Implement a targeted patch that eliminates the loop without breaking the intended post-login redirect behavior.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-any-auth-state-transition-logic-that-can-cause-repeated-state-updates-or-oscillation-in-the-authentication-provider-hook-stack-including-frontend-src-hooks-useinternetidentity-ts-and-frontend-src-hooks-useauthui-ts-ensuring-that-successful-authentication-state-is-not-unintentionally-overwritten-by-initialization-cleanup-and-that-login-errors-do-not-trigger-repeated-login-attempts-automatically",
+      "title": "Fix any auth-state transition logic that can cause repeated state updates or oscillation in the authentication provider/hook stack (including `frontend/src/hooks/useInternetIdentity.ts` and `frontend/src/hooks/useAuthUi.ts`), ensuring that successful authentication state is not unintentionally overwritten by initialization cleanup and that login errors do not trigger repeated login attempts automatically.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-lightweight-developer-focused-diagnostics-to-make-this-class-of-auth-render-loop-issue-easier-to-trace-in-the-future-e-g-guarded-debug-logging-behind-a-simple-flag-without-exposing-sensitive-data",
+      "title": "Add lightweight, developer-focused diagnostics to make this class of auth/render-loop issue easier to trace in the future (e.g., guarded debug logging behind a simple flag) without exposing sensitive data.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [],
+  "projectName": "CaseGuard",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

@@ -1,0 +1,74 @@
+{
+  "kind": "build_request",
+  "title": "Scan frontend auth flow and fix infinite render loop causing React error #301",
+  "projectName": "CaseGuard",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Scan the entire `frontend/src` folder for login/authentication-related code paths (Internet Identity provider, auth UI hook, auth guard, login button, router usage) and identify the exact cause of the infinite render loop leading to “Minified React error #301”. Implement a targeted patch that eliminates the loop without breaking the intended post-login redirect behavior.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "recent-messages"
+        ],
+        "quotes": [
+          "automatically scan the entire frontend folder for login-related code? I’ll locate the loop and patch it"
+        ]
+      },
+      "acceptanceCriteria": [
+        "The app no longer throws React error #301 during the unauthenticated → login → authenticated flow.",
+        "Navigating to a protected route while unauthenticated shows the auth screen and does not cause repeated renders/redirects.",
+        "After successful login, the user is redirected at most once to the stored intended route (if any), and the intended-route storage is cleared.",
+        "No new console errors are introduced during initialization, login, logout, and retry login flows."
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Fix any auth-state transition logic that can cause repeated state updates or oscillation in the authentication provider/hook stack (including `frontend/src/hooks/useInternetIdentity.ts` and `frontend/src/hooks/useAuthUi.ts`), ensuring that successful authentication state is not unintentionally overwritten by initialization cleanup and that login errors do not trigger repeated login attempts automatically.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "recent-messages"
+        ],
+        "quotes": [
+          "Still showing error Something went wrong! ... Minified React error #301"
+        ]
+      },
+      "acceptanceCriteria": [
+        "After a successful login, authentication status remains stable (no rapid toggling between states such as “success”/“idle” that triggers repeated downstream updates).",
+        "When login fails, the UI remains on a stable error screen until the user clicks “Try Again” (no automatic retry loop).",
+        "The “Clear Session & Reload” recovery actions continue to work and do not themselves trigger repeated renders before reload."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Add lightweight, developer-focused diagnostics to make this class of auth/render-loop issue easier to trace in the future (e.g., guarded debug logging behind a simple flag) without exposing sensitive data.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "recent-messages"
+        ],
+        "quotes": [
+          "I’ll locate the loop and patch it"
+        ]
+      },
+      "acceptanceCriteria": [
+        "When diagnostics are enabled, logs clearly indicate auth lifecycle transitions (initializing, idle, logging-in, authenticated) and navigation decisions (whether an intended route exists and whether navigation is performed).",
+        "Diagnostics are disabled by default and do not spam production logs unless explicitly enabled."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not modify files under `frontend/src/components/ui` (read-only UI components must be composed, not edited).",
+    "Do not edit `frontend/src/hooks/useInternetIdentity.ts` or `frontend/src/hooks/useActor.ts` in ways that break Internet Identity support (Internet Identity remains the only authentication mechanism)."
+  ],
+  "nonGoals": [
+    "Adding new authentication providers or third-party auth integrations.",
+    "Adding new product features unrelated to fixing the login/auth render loop."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

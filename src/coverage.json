@@ -1,0 +1,79 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-17T06:55:08.454Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 3,
+    "implemented": 3,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Scan the entire `frontend/src` folder for login/authentication-related code paths (Internet Identity provider, auth UI hook, auth guard, login button, router usage) and identify the exact cause of the infinite render loop leading to “Minified React error #301”. Implement a targeted patch that eliminates the loop without breaking the intended post-login redirect behavior.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/components/auth/RequireAuth.tsx",
+          "frontend/src/utils/intendedRoute.ts",
+          "frontend/src/App.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/components/auth/RequireAuth.tsx",
+          "frontend/src/utils/intendedRoute.ts",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Fix any auth-state transition logic that can cause repeated state updates or oscillation in the authentication provider/hook stack (including `frontend/src/hooks/useInternetIdentity.ts` and `frontend/src/hooks/useAuthUi.ts`), ensuring that successful authentication state is not unintentionally overwritten by initialization cleanup and that login errors do not trigger repeated login attempts automatically.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useInternetIdentity.ts",
+          "frontend/src/hooks/useAuthUi.ts",
+          "frontend/src/components/auth/LoginButton.tsx",
+          "frontend/src/components/errors/AppErrorBoundary.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useAuthUi.ts",
+          "frontend/src/components/auth/LoginButton.tsx",
+          "frontend/src/components/errors/AppErrorBoundary.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Add lightweight, developer-focused diagnostics to make this class of auth/render-loop issue easier to trace in the future (e.g., guarded debug logging behind a simple flag) without exposing sensitive data.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/utils/authDiagnostics.ts",
+          "frontend/src/hooks/useInternetIdentity.ts",
+          "frontend/src/hooks/useAuthUi.ts",
+          "frontend/src/components/auth/RequireAuth.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/utils/authDiagnostics.ts",
+          "frontend/src/hooks/useAuthUi.ts",
+          "frontend/src/components/auth/RequireAuth.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/src/App.tsx",
+    "frontend/src/components/auth/LoginButton.tsx",
+    "frontend/src/components/auth/RequireAuth.tsx",
+    "frontend/src/components/errors/AppErrorBoundary.tsx",
+    "frontend/src/hooks/useAuthUi.ts",
+    "frontend/src/utils/authDiagnostics.ts",
+    "frontend/src/utils/intendedRoute.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

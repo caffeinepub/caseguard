@@ -1,0 +1,95 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Fix React #301 infinite render loop in CaseGuard auth flow (frontend)",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Identify and patch the exact auth/redirect render loop so unauthenticated→login→authenticated completes without repeated renders and preserves single post-login redirect behavior.",
+      "acceptanceCriteria": [
+        "The app no longer throws React error #301 during the unauthenticated → login → authenticated flow.",
+        "Navigating to a protected route while unauthenticated shows the auth screen and does not cause repeated renders/redirects.",
+        "After successful login, the user is redirected at most once to the stored intended route (if any), and the intended-route storage is cleared.",
+        "No new console errors are introduced during initialization, login, logout, and retry login flows."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/auth/RequireAuth.tsx",
+          "operation": "modify",
+          "description": "Fix redirect effect(s) to be strictly single-shot and non-oscillating: guard navigation to intended route so it only happens once per successful auth, avoid navigating when intended route matches current location, and ensure intended-route storage is cleared exactly once (before/after navigation without re-triggering). Add any necessary refs/state to prevent repeated navigate calls during rerenders. Use the authorization component guidance for safe auth-gated navigation patterns; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/utils/intendedRoute.ts",
+          "operation": "modify",
+          "description": "Harden intended-route persistence helpers to reduce redirect loops: normalize stored values (e.g., avoid storing empty/invalid routes), and optionally provide a safe helper to compare/validate current route vs intended route so RequireAuth can avoid redundant redirects."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Verify router/auth-guard composition so protected routes consistently render RequireAuth without causing remount/redirect loops; adjust route wrappers only if needed to support the corrected single-redirect behavior (no new routes)."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Stabilize auth-state transitions across the provider and UI hook stack to prevent repeated state updates, status oscillation, and automatic retry loops on errors.",
+      "acceptanceCriteria": [
+        "After a successful login, authentication status remains stable (no rapid toggling between states such as “success”/“idle” that triggers repeated downstream updates).",
+        "When login fails, the UI remains on a stable error screen until the user clicks “Try Again” (no automatic retry loop).",
+        "The “Clear Session & Reload” recovery actions continue to work and do not themselves trigger repeated renders before reload."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useInternetIdentity.ts",
+          "operation": "modify",
+          "description": "Patch provider state transitions to prevent status/identity oscillation: ensure initialization completion does not overwrite an already-authenticated/success state, and avoid authClient resets that trigger unnecessary re-initialization loops. Keep Internet Identity as the only auth mechanism and do not break II support. Use the authorization component's frontend guidance (clearing cached data on logout, stable authenticated gating); verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useAuthUi.ts",
+          "operation": "modify",
+          "description": "Remove any implicit retry/loop behaviors in UI-layer auth logic: ensure login errors do not automatically re-trigger login, keep error UI stable until explicit user action, and ensure successful auth is not masked by UI-derived status normalization. Use the authorization component guidance for stable login/logout flows; verify the component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/auth/LoginButton.tsx",
+          "operation": "modify",
+          "description": "Confirm the login/logout button only triggers auth actions on user interaction and does not contribute to repeated login attempts; adjust to respect stable isLoggingIn/error states from useAuthUi. Verify the authorization component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/errors/AppErrorBoundary.tsx",
+          "operation": "modify",
+          "description": "Verify recovery actions (clear session & reload) remain best-effort and do not cause repeated state updates prior to reload; align with any auth state cleanup changes made in hooks. Verify the authorization component's usage instructions before implementing."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Add lightweight, opt-in diagnostics for auth lifecycle and navigation decisions to aid future render-loop debugging without leaking sensitive data.",
+      "acceptanceCriteria": [
+        "When diagnostics are enabled, logs clearly indicate auth lifecycle transitions (initializing, idle, logging-in, authenticated) and navigation decisions (whether an intended route exists and whether navigation is performed).",
+        "Diagnostics are disabled by default and do not spam production logs unless explicitly enabled."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/utils/authDiagnostics.ts",
+          "operation": "create",
+          "description": "Create an opt-in diagnostics utility (e.g., flag via localStorage or env) that provides guarded debug logging helpers for auth lifecycle and redirect decisions. Ensure logs avoid sensitive data (no tokens, no delegation, no full identity details) and are disabled by default."
+        },
+        {
+          "path": "frontend/src/hooks/useInternetIdentity.ts",
+          "operation": "modify",
+          "description": "Instrument key lifecycle transitions (initialization start/end, login start, login success, login error, logout/clear) using the guarded diagnostics utility while ensuring no sensitive values are logged. Verify the authorization component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/hooks/useAuthUi.ts",
+          "operation": "modify",
+          "description": "Instrument UI-level transitions (effectiveStatus changes, retry button actions) using the guarded diagnostics utility; ensure no automatic retries are introduced. Verify the authorization component's usage instructions before implementing."
+        },
+        {
+          "path": "frontend/src/components/auth/RequireAuth.tsx",
+          "operation": "modify",
+          "description": "Instrument intended-route storage and redirect decisions (whether intended route exists, whether navigation occurs, and when it is cleared) using the guarded diagnostics utility. Verify the authorization component's usage instructions before implementing."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-scan-the-entire-frontend-src-folder-for-login-authentication-related-code-paths-internet-identity-provider-auth-ui-hook-auth-guard-login-button-router-usage-and-identify-the-exact-cause-of-the-infinite-render-loop-leading-to-minified-react-error-301-implement-a-targeted-patch-that-eliminates-the-loop-without-breaking-the-intended-post-login-redirect-behavior",
+      "featureTitle": "Scan the entire `frontend/src` folder for login/authentication-related code paths (Internet Identity provider, auth UI hook, auth guard, login button, router usage) and identify the exact cause of the infinite render loop leading to “Minified React error #301”. Implement a targeted patch that eliminates the loop without breaking the intended post-login redirect behavior.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/auth/RequireAuth.tsx",
+        "frontend/src/utils/intendedRoute.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-1"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-fix-any-auth-state-transition-logic-that-can-cause-repeated-state-updates-or-oscillation-in-the-authentication-provider-hook-stack-including-frontend-src-hooks-useinternetidentity-ts-and-frontend-src-hooks-useauthui-ts-ensuring-that-successful-authentication-state-is-not-unintentionally-overwritten-by-initialization-cleanup-and-that-login-errors-do-not-trigger-repeated-login-attempts-automatically",
+      "featureTitle": "Fix any auth-state transition logic that can cause repeated state updates or oscillation in the authentication provider/hook stack (including `frontend/src/hooks/useInternetIdentity.ts` and `frontend/src/hooks/useAuthUi.ts`), ensuring that successful authentication state is not unintentionally overwritten by initialization cleanup and that login errors do not trigger repeated login attempts automatically.",
+      "files": [
+        "frontend/src/components/auth/LoginButton.tsx",
+        "frontend/src/components/errors/AppErrorBoundary.tsx",
+        "frontend/src/hooks/useAuthUi.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-lightweight-developer-focused-diagnostics-to-make-this-class-of-auth-render-loop-issue-easier-to-trace-in-the-future-e-g-guarded-debug-logging-behind-a-simple-flag-without-exposing-sensitive-data",
+      "featureTitle": "Add lightweight, developer-focused diagnostics to make this class of auth/render-loop issue easier to trace in the future (e.g., guarded debug logging behind a simple flag) without exposing sensitive data.",
+      "files": [
+        "frontend/src/components/auth/RequireAuth.tsx",
+        "frontend/src/hooks/useAuthUi.ts",
+        "frontend/src/utils/authDiagnostics.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
+      ],
+      "confidence": "high"
+    }
+  ]
+}
